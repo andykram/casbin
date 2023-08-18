@@ -152,10 +152,15 @@ func (e *Enforcer) GetAllRolesByDomain(domain string) []string {
 	policies := g.Policy
 	roles := make([]string, 0)
 	existMap := make(map[string]bool) // remove duplicates
+	domainIdx, _ := e.GetFieldIndex("g", constant.DomainIndex)
+	roleIdx := 2
 
 	for _, policy := range policies {
-		if policy[len(policy)-1] == domain {
-			role := policy[len(policy)-2]
+		if domainIdx >= len(policy) {
+			continue
+		}
+		if policy[domainIdx] == domain && roleIdx < len(policy) {
+			role := policy[roleIdx]
 			if _, ok := existMap[role]; !ok {
 				roles = append(roles, role)
 				existMap[role] = true
